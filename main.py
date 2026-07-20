@@ -1,43 +1,56 @@
 import streamlit as st
 
-st.set_page_config(page_title="MBTI 포켓몬 추천 by Suhee Agnes", page_icon="🎮")
+# 페이지 기본 설정
+st.set_page_config(page_title="MBTI 포켓몬 테스트", page_icon="⚡", layout="centered")
 
-data = {
-    "INTJ": ("뮤츠", "차갑게 똑똑한 전략가형. 한 수 앞을 보는 카리스마가 닮았어요."),
-    "INTP": ("후딘", "분석력과 호기심이 강한 타입. 생각이 깊고 두뇌 플레이에 강해요."),
-    "ENTJ": ("리자몽", "리더십과 추진력이 강한 타입. 존재감이 크고 목표 지향적이에요."),
-    "ENTP": ("팬텀", "재치 있고 독특한 발상이 매력인 타입. 장난기와 창의력이 넘쳐요."),
-    "INFJ": ("루기아", "신비롭고 깊이 있는 이상주의자형. 조용하지만 강한 신념이 있어요."),
-    "INFP": ("이브이", "감수성이 풍부하고 가능성이 많은 타입. 어떤 방향으로도 빛날 수 있어요."),
-    "ENFJ": ("픽시", "따뜻하게 사람을 챙기는 타입. 주변을 편안하게 만드는 힘이 있어요."),
-    "ENFP": ("피카츄", "밝고 사랑스러운 분위기 메이커. 어디서든 존재감이 반짝여요."),
-    "ISTJ": ("거북왕", "성실하고 믿음직한 현실형. 묵직하게 자기 역할을 해내는 타입이에요."),
-    "ISFJ": ("해피너스", "배려심 깊고 다정한 보호자형. 곁에 있으면 마음이 편해져요."),
-    "ESTJ": ("보스로라", "단단하고 책임감 있는 관리자형. 안정감과 추진력이 강해요."),
-    "ESFJ": ("윈디", "친절하고 사교적인 타입. 따뜻하고 든든한 매력이 있어요."),
-    "ISTP": ("루카리오", "조용하지만 실력 있는 해결사형. 말보다 행동이 앞서는 편이에요."),
-    "ISFP": ("나인테일", "감각적이고 섬세한 타입. 은은하지만 강한 매력이 있어요."),
-    "ESTP": ("괴력몬", "에너지 넘치고 실행력이 강한 타입. 현장에서 빛나는 액션파예요."),
-    "ESFP": ("푸린", "사람들을 즐겁게 만드는 분위기 메이커. 귀엽고 사랑스러운 매력이 있어요.")
+# 메인 타이틀
+st.title("⚡ 내 MBTI에 찰떡인 포켓몬은?")
+st.write("당신의 MBTI를 선택하면, 성격과 가장 잘 어울리는 포켓몬을 추천해 드립니다!")
+
+# MBTI별 포켓몬 데이터 (도감 번호로 고화질 공식 이미지 연동)
+pokemon_data = {
+    "INTJ": {"name": "뮤츠", "desc": "냉철한 전략가! 혼자만의 시간을 즐기며 엄청난 잠재력을 숨기고 있어요.", "img": "150"},
+    "INTP": {"name": "후딘", "desc": "아이큐 5000의 천재! 논리적이고 분석적인 당신에게 딱 어울려요.", "img": "65"},
+    "ENTJ": {"name": "리자몽", "desc": "타고난 리더! 목표를 향해 불타오르는 열정과 카리스마를 가졌네요.", "img": "6"},
+    "ENTP": {"name": "팬텀", "desc": "장난기 가득한 아이디어 뱅크! 예측 불가능한 매력으로 사람들을 홀려요.", "img": "94"},
+    "INFJ": {"name": "루기아", "desc": "신비로운 수호자! 깊은 통찰력으로 사람들의 마음을 꿰뚫어보고 위로해줘요.", "img": "249"},
+    "INFP": {"name": "님피아", "desc": "평화주의자 요정! 따뜻한 마음씨와 뛰어난 공감 능력으로 주위를 환하게 해요.", "img": "700"},
+    "ENFJ": {"name": "윈디", "desc": "정의롭고 다정한 리더! 언제나 사람들을 이끌고 챙겨주는 따뜻한 마음의 소유자예요.", "img": "59"},
+    "ENFP": {"name": "이브이", "desc": "호기심 천국! 어떤 모습으로든 진화할 수 있는 무한한 가능성과 친화력을 가졌어요.", "img": "133"},
+    "ISTJ": {"name": "이상해꽃", "desc": "흔들리지 않는 나무! 묵묵히 자신의 책임을 다하는 믿음직하고 차분한 성격이에요.", "img": "3"},
+    "ISFJ": {"name": "럭키", "desc": "다정한 천사! 다른 사람을 챙기고 돌보는 것을 좋아하며 곁에 있으면 힘이 돼요.", "img": "113"},
+    "ESTJ": {"name": "거북왕", "desc": "철저한 행동파! 강력한 물대포처럼 추진력이 넘치고 규칙과 룰을 잘 지켜요.", "img": "9"},
+    "ESFJ": {"name": "푸린", "desc": "분위기 메이커! 사람들 앞에서는 걸 좋아하고 친절해서 인기가 많아요.", "img": "39"},
+    "ISTP": {"name": "스라크", "desc": "쿨하고 시크한 해결사! 뛰어난 상황 판단력과 민첩한 행동력의 소유자네요.", "img": "123"},
+    "ISFP": {"name": "루브도", "desc": "자유로운 영혼의 예술가! 자신만의 색깔로 세상을 아름답게 칠하고 싶어 해요.", "img": "235"},
+    "ESTP": {"name": "괴력몬", "desc": "넘치는 에너지! 머리보다 몸이 먼저 반응하며 스릴과 모험을 즐기는 행동파예요.", "img": "68"},
+    "ESFP": {"name": "로파파", "desc": "흥겨운 댄스 머신! 낙천적이고 언제나 파티의 중심에서 사람들을 즐겁게 해줘요.", "img": "272"}
 }
 
-st.title("🎮 MBTI 포켓몬 추천기by Suhee Agnes")
-st.write("당신의 MBTI를 고르면, 어울리는 포켓몬을 추천해드려요.")
+st.write("---")
 
-mbti = st.selectbox(
-    "MBTI 선택",
-    list(data.keys()),
-    index=None,
-    placeholder="여기서 MBTI를 골라보세요!"
-)
+# MBTI 선택 드롭다운
+mbti_options = ["선택하세요"] + list(pokemon_data.keys())
+selected_mbti = st.selectbox("👇 당신의 MBTI를 골라주세요!", mbti_options)
 
-if st.button("결과 보기 ✨"):
-    if mbti is None:
-        st.warning("먼저 MBTI를 선택해주세요!")
-    else:
-        pokemon, desc = data[mbti]
+# 결과 출력
+if selected_mbti != "선택하세요":
+    if st.button("결과 확인하기 몬스터볼 던지기! 🔴"):
+        data = pokemon_data[selected_mbti]
+        
+        # 화면 축하 효과
         st.balloons()
-        st.subheader(f"🧠 {mbti}에게 어울리는 포켓몬")
-        st.success(f"**{pokemon}**")
-        st.write(desc)
-        st.info("Suhee Agnes가 추천하는 재미로 보는 성격 매칭 결과예요 😄")
+        
+        st.write("---")
+        st.markdown(f"<h2 style='text-align: center;'>🎉 당신의 포켓몬은 <b>{data['name']}</b> 입니다!</h2>", unsafe_allow_html=True)
+        
+        # 포켓몬 공식 이미지 출력 (PokeAPI 활용)
+        img_url = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{data['img']}.png"
+        
+        # 이미지를 가운데 정렬하기 위해 컬럼 사용
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(img_url, use_container_width=True)
+        
+        # 포켓몬 설명
+        st.success(data['desc'])
