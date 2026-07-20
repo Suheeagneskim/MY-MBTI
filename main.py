@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="MBTI 포켓몬 추천", page_icon="🎮")
+st.set_page_config(page_title="MBTI 포켓몬 추천 by Suhee Agnes", page_icon="🎮")
 
 data = {
     "INTJ": ("뮤츠", "차갑게 똑똑한 전략가형. 한 수 앞을 보는 카리스마가 닮았어요."),
@@ -21,7 +21,7 @@ data = {
     "ESFP": ("푸린", "사람들을 즐겁게 만드는 분위기 메이커. 귀엽고 사랑스러운 매력이 있어요.")
 }
 
-st.title("🎮 MBTI 포켓몬 추천기")
+st.title("🎮 MBTI 포켓몬 추천기by Suhee Agnes")
 st.write("당신의 MBTI를 고르면, 어울리는 포켓몬을 추천해드려요.")
 
 mbti = st.selectbox(
@@ -40,4 +40,4 @@ if st.button("결과 보기 ✨"):
         st.subheader(f"🧠 {mbti}에게 어울리는 포켓몬")
         st.success(f"**{pokemon}**")
         st.write(desc)
-        st.info("재미로 보는 성격 매칭 결과예요 😄")
+        st.info("Suhee Agnes가 추천하는 재미로 보는 성격 매칭 결과예요 😄")
