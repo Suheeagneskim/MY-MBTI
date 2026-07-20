@@ -1,56 +1,99 @@
 import streamlit as st
+import random
 
-# 페이지 기본 설정
-st.set_page_config(page_title="MBTI 포켓몬 테스트", page_icon="⚡", layout="centered")
+st.set_page_config(
+    page_title="나의 MBTI 포켓몬",
+    page_icon="⚡",
+    layout="centered"
+)
 
-# 메인 타이틀
-st.title("⚡ 내 MBTI에 찰떡인 포켓몬은?")
-st.write("당신의 MBTI를 선택하면, 성격과 가장 잘 어울리는 포켓몬을 추천해 드립니다!")
+POKEMON = {
+    "INTJ": ("뮤츠", "🧬", "강한 독립심과 뛰어난 전략 능력을 가진 전설의 포켓몬!", "혼자 있는 듯 보여도 머릿속에서는 세계 정복 계획을 세우는 중입니다."),
+    "INTP": ("메타몽", "🟣", "무한한 가능성과 독특한 사고방식을 가진 변신의 천재!", "관심 있는 분야를 만나면 어떤 모습으로든 진화할 수 있습니다."),
+    "ENTJ": ("리자몽", "🔥", "강한 카리스마로 목표를 향해 날아가는 리더형 포켓몬!", "당신이 방향을 정하면 동료들은 자연스럽게 따라옵니다."),
+    "ENTP": ("팬텀", "👻", "장난기와 아이디어가 넘치는 예측 불가능한 포켓몬!", "평범한 길보다 재미있는 지름길을 발견하는 능력이 있습니다."),
 
-# MBTI별 포켓몬 데이터 (도감 번호로 고화질 공식 이미지 연동)
-pokemon_data = {
-    "INTJ": {"name": "뮤츠", "desc": "냉철한 전략가! 혼자만의 시간을 즐기며 엄청난 잠재력을 숨기고 있어요.", "img": "150"},
-    "INTP": {"name": "후딘", "desc": "아이큐 5000의 천재! 논리적이고 분석적인 당신에게 딱 어울려요.", "img": "65"},
-    "ENTJ": {"name": "리자몽", "desc": "타고난 리더! 목표를 향해 불타오르는 열정과 카리스마를 가졌네요.", "img": "6"},
-    "ENTP": {"name": "팬텀", "desc": "장난기 가득한 아이디어 뱅크! 예측 불가능한 매력으로 사람들을 홀려요.", "img": "94"},
-    "INFJ": {"name": "루기아", "desc": "신비로운 수호자! 깊은 통찰력으로 사람들의 마음을 꿰뚫어보고 위로해줘요.", "img": "249"},
-    "INFP": {"name": "님피아", "desc": "평화주의자 요정! 따뜻한 마음씨와 뛰어난 공감 능력으로 주위를 환하게 해요.", "img": "700"},
-    "ENFJ": {"name": "윈디", "desc": "정의롭고 다정한 리더! 언제나 사람들을 이끌고 챙겨주는 따뜻한 마음의 소유자예요.", "img": "59"},
-    "ENFP": {"name": "이브이", "desc": "호기심 천국! 어떤 모습으로든 진화할 수 있는 무한한 가능성과 친화력을 가졌어요.", "img": "133"},
-    "ISTJ": {"name": "이상해꽃", "desc": "흔들리지 않는 나무! 묵묵히 자신의 책임을 다하는 믿음직하고 차분한 성격이에요.", "img": "3"},
-    "ISFJ": {"name": "럭키", "desc": "다정한 천사! 다른 사람을 챙기고 돌보는 것을 좋아하며 곁에 있으면 힘이 돼요.", "img": "113"},
-    "ESTJ": {"name": "거북왕", "desc": "철저한 행동파! 강력한 물대포처럼 추진력이 넘치고 규칙과 룰을 잘 지켜요.", "img": "9"},
-    "ESFJ": {"name": "푸린", "desc": "분위기 메이커! 사람들 앞에서는 걸 좋아하고 친절해서 인기가 많아요.", "img": "39"},
-    "ISTP": {"name": "스라크", "desc": "쿨하고 시크한 해결사! 뛰어난 상황 판단력과 민첩한 행동력의 소유자네요.", "img": "123"},
-    "ISFP": {"name": "루브도", "desc": "자유로운 영혼의 예술가! 자신만의 색깔로 세상을 아름답게 칠하고 싶어 해요.", "img": "235"},
-    "ESTP": {"name": "괴력몬", "desc": "넘치는 에너지! 머리보다 몸이 먼저 반응하며 스릴과 모험을 즐기는 행동파예요.", "img": "68"},
-    "ESFP": {"name": "로파파", "desc": "흥겨운 댄스 머신! 낙천적이고 언제나 파티의 중심에서 사람들을 즐겁게 해줘요.", "img": "272"}
+    "INFJ": ("루카리오", "💫", "상대의 마음과 분위기를 섬세하게 감지하는 포켓몬!", "조용하지만 소중한 사람을 위해서는 누구보다 강해집니다."),
+    "INFP": ("이브이", "🌟", "따뜻한 감성과 다양한 가능성을 품고 있는 포켓몬!", "어떤 모습으로 성장할지는 당신의 선택에 달려 있습니다."),
+    "ENFJ": ("가디안", "🔮", "사람들을 보호하고 이끄는 따뜻한 수호자 포켓몬!", "주변 사람들의 잠재력을 발견하는 특별한 눈을 가졌습니다."),
+    "ENFP": ("피카츄", "⚡", "밝은 에너지로 모두를 즐겁게 만드는 인기 포켓몬!", "어디를 가든 새로운 친구와 새로운 모험이 생깁니다."),
+
+    "ISTJ": ("거북왕", "💧", "책임감과 안정적인 실력을 갖춘 믿음직한 포켓몬!", "말보다는 확실한 결과로 능력을 증명하는 타입입니다."),
+    "ISFJ": ("해피너스", "💗", "주변 사람을 세심하게 돌보는 따뜻한 포켓몬!", "당신 곁에 있으면 이상하게 마음이 편안해집니다."),
+    "ESTJ": ("망나뇽", "🐉", "강한 실행력과 든든함을 겸비한 리더 포켓몬!", "해야 할 일을 발견하면 고민보다 행동이 먼저입니다."),
+    "ESFJ": ("님피아", "🎀", "친화력과 다정함으로 분위기를 밝히는 포켓몬!", "모임에서 모두가 즐거운지 가장 먼저 살펴봅니다."),
+
+    "ISTP": ("개굴닌자", "🥷", "침착하고 민첩하게 문제를 해결하는 포켓몬!", "설명은 짧게, 행동은 빠르고 정확하게 움직입니다."),
+    "ISFP": ("파치리스", "🌿", "자유롭고 사랑스러운 매력을 지닌 감성 포켓몬!", "조용히 있다가 결정적인 순간에 모두를 놀라게 합니다."),
+    "ESTP": ("에이스번", "⚽", "도전과 경쟁을 즐기는 행동파 포켓몬!", "일단 뛰어들고 현장에서 답을 찾아내는 스타일입니다."),
+    "ESFP": ("고라파덕", "💛", "엉뚱하지만 미워할 수 없는 매력의 분위기 메이커!", "본인은 평범하게 행동했는데 주변에서는 이미 웃고 있습니다.")
 }
 
-st.write("---")
+REACTIONS = [
+    "포켓몬 도감과 성격 파장이 완벽하게 일치했습니다!",
+    "오박사님도 결과를 보고 고개를 끄덕였습니다.",
+    "야생의 포켓몬이 당신을 동료로 선택했습니다!",
+    "이 조합은 생각보다 강력합니다. 배틀 신청 주의!",
+    "당신의 가방에서 몬스터볼이 흔들리고 있습니다!"
+]
 
-# MBTI 선택 드롭다운
-mbti_options = ["선택하세요"] + list(pokemon_data.keys())
-selected_mbti = st.selectbox("👇 당신의 MBTI를 골라주세요!", mbti_options)
+st.markdown(
+    """
+    <style>
+    .main-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+    }
+    .result-box {
+        padding: 25px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #fff5c2, #ffe0e9);
+        text-align: center;
+        margin-top: 20px;
+        color: #222;
+    }
+    .pokemon {
+        font-size: 4.5rem;
+        margin: 5px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-# 결과 출력
-if selected_mbti != "선택하세요":
-    if st.button("결과 확인하기 몬스터볼 던지기! 🔴"):
-        data = pokemon_data[selected_mbti]
-        
-        # 화면 축하 효과
+st.markdown('<div class="main-title">⚡ MBTI 포켓몬 연구소 ⚡</div>',
+            unsafe_allow_html=True)
+st.caption("당신의 성격과 가장 잘 어울리는 포켓몬을 찾아보세요!")
+
+mbti = st.selectbox(
+    "나의 MBTI를 선택하세요",
+    ["선택하기"] + list(POKEMON.keys())
+)
+
+if st.button("🔴 몬스터볼 열기", use_container_width=True):
+    if mbti == "선택하기":
+        st.warning("먼저 MBTI를 선택해주세요!")
+    else:
+        name, emoji, description, comment = POKEMON[mbti]
+
         st.balloons()
-        
-        st.write("---")
-        st.markdown(f"<h2 style='text-align: center;'>🎉 당신의 포켓몬은 <b>{data['name']}</b> 입니다!</h2>", unsafe_allow_html=True)
-        
-        # 포켓몬 공식 이미지 출력 (PokeAPI 활용)
-        img_url = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{data['img']}.png"
-        
-        # 이미지를 가운데 정렬하기 위해 컬럼 사용
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.image(img_url, use_container_width=True)
-        
-        # 포켓몬 설명
-        st.success(data['desc'])
+        st.markdown(
+            f"""
+            <div class="result-box">
+                <div>당신과 함께할 포켓몬은...</div>
+                <div class="pokemon">{emoji}</div>
+                <h1>{name}</h1>
+                <h3>{mbti} × {name}</h3>
+                <p>{description}</p>
+                <p><b>💬 포켓몬 분석:</b> {comment}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        st.success(random.choice(REACTIONS))
+        st.progress(random.randint(85, 100), text="포켓몬 궁합 분석 완료!")
+
+st.divider()
+st.caption("※ 재미로 보는 성격 테스트입니다. 포켓몬 배틀 결과는 책임지지 않습니다 😄")
